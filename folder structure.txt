@@ -1,0 +1,17 @@
+G-CAD/
+│
+├── app.py
+├── model.py
+├── requirements.txt
+│
+├── static/
+│   ├── style.css
+│   ├── script.js
+│   └── logo.png   (your G-CAD logo)
+│
+├── templates/
+│   ├── home.html
+│   ├── about.html
+│   ├── detect.html
+│   ├── contact.html
+│   └── login.html

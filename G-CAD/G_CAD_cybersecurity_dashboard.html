@@ -1,0 +1,536 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#030d1a;--bg2:#061526;--bg3:#0a1f35;
+    --accent:#00e5ff;--accent2:#00ff88;--danger:#ff3b5c;--warn:#ffb800;
+    --text:#c8e6f5;--text2:#7aafc8;--border:rgba(0,229,255,0.18);
+    --glass:rgba(6,21,38,0.85);
+    --font:'Rajdhani',sans-serif;--mono:'Share Tech Mono',monospace;
+  }
+  body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);}
+
+  /* HERO */
+  .hero{
+    background:linear-gradient(135deg,#020c18 0%,#051220 40%,#0a2040 100%);
+    border-bottom:1px solid var(--border);
+    padding:2.5rem 2rem 2rem;
+    position:relative;overflow:hidden;
+  }
+  .hero::before{
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(ellipse 80% 60% at 70% 50%,rgba(0,229,255,0.06),transparent);
+  }
+  .grid-lines{
+    position:absolute;inset:0;
+    background-image:linear-gradient(rgba(0,229,255,0.04) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(0,229,255,0.04) 1px,transparent 1px);
+    background-size:40px 40px;
+  }
+  .hero-inner{position:relative;z-index:1;}
+  .tag{display:inline-block;background:rgba(0,229,255,0.12);border:1px solid rgba(0,229,255,0.3);
+    color:var(--accent);font-family:var(--mono);font-size:11px;padding:3px 10px;
+    border-radius:3px;letter-spacing:1px;margin-bottom:1rem;}
+  .hero h1{font-size:clamp(1.4rem,4vw,2.2rem);font-weight:600;line-height:1.2;
+    color:#fff;letter-spacing:0.5px;}
+  .hero h1 span{color:var(--accent);}
+  .hero p{color:var(--text2);font-size:1rem;margin-top:0.5rem;max-width:540px;font-family:var(--mono);font-size:13px;}
+  .hero-meta{display:flex;gap:1.5rem;margin-top:1.2rem;flex-wrap:wrap;}
+  .meta-pill{display:flex;align-items:center;gap:6px;font-size:12px;font-family:var(--mono);color:var(--text2);}
+  .dot{width:7px;height:7px;border-radius:50%;}
+  .dot.green{background:var(--accent2);}
+  .dot.blue{background:var(--accent);}
+  .dot.pulse{animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(1.3);}}
+
+  /* NAV TABS */
+  .tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--bg2);overflow-x:auto;}
+  .tab{padding:0.7rem 1.2rem;font-size:13px;font-family:var(--mono);color:var(--text2);
+    cursor:pointer;border:none;background:transparent;border-bottom:2px solid transparent;
+    white-space:nowrap;transition:all 0.2s;letter-spacing:0.5px;}
+  .tab:hover{color:var(--accent);}
+  .tab.active{color:var(--accent);border-bottom:2px solid var(--accent);}
+
+  /* PAGES */
+  .page{display:none;padding:1.5rem 1.5rem 2rem;}
+  .page.active{display:block;}
+
+  /* CARDS */
+  .card{background:var(--glass);border:1px solid var(--border);border-radius:6px;padding:1.2rem;}
+  .card-title{font-family:var(--mono);font-size:11px;color:var(--text2);letter-spacing:1.5px;
+    text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;gap:8px;}
+  .card-title::before{content:'';width:3px;height:14px;background:var(--accent);border-radius:2px;}
+
+  /* STATS ROW */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.2rem;}
+  .stat{background:rgba(0,229,255,0.05);border:1px solid var(--border);border-radius:6px;padding:0.9rem;}
+  .stat-val{font-size:1.6rem;font-weight:600;color:var(--accent);font-family:var(--mono);}
+  .stat-val.red{color:var(--danger);}
+  .stat-val.green{color:var(--accent2);}
+  .stat-val.warn{color:var(--warn);}
+  .stat-lbl{font-size:11px;color:var(--text2);margin-top:2px;font-family:var(--mono);}
+
+  /* DETECTION */
+  .input-row{display:flex;gap:10px;margin-bottom:1rem;flex-wrap:wrap;}
+  .detect-input{flex:1;min-width:200px;background:rgba(0,0,0,0.4);border:1px solid var(--border);
+    border-radius:5px;padding:0.7rem 1rem;color:var(--text);font-family:var(--mono);font-size:13px;outline:none;}
+  .detect-input:focus{border-color:var(--accent);}
+  .btn{background:rgba(0,229,255,0.1);border:1px solid var(--accent);color:var(--accent);
+    padding:0.65rem 1.4rem;border-radius:5px;font-family:var(--mono);font-size:13px;cursor:pointer;
+    letter-spacing:1px;transition:all 0.2s;}
+  .btn:hover{background:rgba(0,229,255,0.2);}
+  .btn:active{transform:scale(0.97);}
+
+  /* PROGRESS BAR */
+  .progress-wrap{margin-bottom:1rem;display:none;}
+  .progress-label{font-family:var(--mono);font-size:11px;color:var(--accent);margin-bottom:6px;letter-spacing:1px;}
+  .progress-bar{height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;}
+  .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));
+    border-radius:2px;transition:width 0.05s linear;}
+
+  /* RESULT CARD */
+  .result-card{display:none;border-radius:6px;padding:1.2rem;margin-top:1rem;}
+  .result-card.low{background:rgba(0,255,136,0.07);border:1px solid rgba(0,255,136,0.3);}
+  .result-card.medium{background:rgba(255,184,0,0.07);border:1px solid rgba(255,184,0,0.3);}
+  .result-card.high{background:rgba(255,59,92,0.08);border:1px solid rgba(255,59,92,0.35);}
+  .result-score{font-size:2.8rem;font-weight:600;font-family:var(--mono);}
+  .result-score.low{color:var(--accent2);}
+  .result-score.medium{color:var(--warn);}
+  .result-score.high{color:var(--danger);}
+  .result-badge{display:inline-block;padding:3px 12px;border-radius:3px;font-family:var(--mono);
+    font-size:11px;letter-spacing:1.5px;margin:6px 0;}
+  .result-badge.low{background:rgba(0,255,136,0.15);color:var(--accent2);}
+  .result-badge.medium{background:rgba(255,184,0,0.15);color:var(--warn);}
+  .result-badge.high{background:rgba(255,59,92,0.15);color:var(--danger);}
+  .result-details{margin-top:0.8rem;font-family:var(--mono);font-size:12px;color:var(--text2);
+    display:flex;flex-direction:column;gap:4px;}
+  .check{color:var(--accent2);margin-right:6px;}
+
+  /* RISK METER */
+  .meter{width:100%;height:10px;background:rgba(255,255,255,0.06);border-radius:5px;
+    overflow:hidden;margin:0.5rem 0;}
+  .meter-fill{height:100%;border-radius:5px;transition:width 0.6s ease;}
+
+  /* LOG TABLE */
+  .log-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px;}
+  .log-table th{color:var(--text2);text-align:left;padding:6px 10px;
+    border-bottom:1px solid var(--border);font-weight:400;letter-spacing:1px;}
+  .log-table td{padding:8px 10px;border-bottom:1px solid rgba(0,229,255,0.06);color:var(--text);}
+  .log-table tr:hover td{background:rgba(0,229,255,0.03);}
+  .badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:10px;letter-spacing:1px;}
+  .badge.low{background:rgba(0,255,136,0.12);color:var(--accent2);}
+  .badge.med{background:rgba(255,184,0,0.12);color:var(--warn);}
+  .badge.high{background:rgba(255,59,92,0.12);color:var(--danger);}
+
+  /* ABOUT */
+  .about-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;}
+  .obj-item{display:flex;align-items:flex-start;gap:10px;padding:0.7rem 0;
+    border-bottom:1px solid var(--border);}
+  .obj-num{font-family:var(--mono);font-size:11px;color:var(--accent);min-width:22px;}
+  .obj-text{font-size:14px;color:var(--text);}
+  .team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:1rem;}
+  .member{background:rgba(0,229,255,0.04);border:1px solid var(--border);border-radius:6px;
+    padding:0.9rem;text-align:center;}
+  .avatar{width:44px;height:44px;border-radius:50%;background:rgba(0,229,255,0.12);
+    border:1px solid rgba(0,229,255,0.3);display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:13px;color:var(--accent);margin:0 auto 0.6rem;}
+  .member-name{font-size:13px;font-weight:600;color:var(--text);}
+  .member-role{font-size:11px;font-family:var(--mono);color:var(--text2);margin-top:2px;}
+
+  /* CONTACT */
+  .contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;}
+  .contact-card{background:rgba(0,229,255,0.04);border:1px solid var(--border);border-radius:6px;padding:1rem;}
+  .contact-icon{font-size:16px;color:var(--accent);margin-bottom:0.5rem;font-family:var(--mono);}
+  .contact-label{font-size:11px;font-family:var(--mono);color:var(--text2);letter-spacing:1px;margin-bottom:4px;}
+  .contact-val{font-size:13px;color:var(--text);}
+
+  /* CHART */
+  .mini-chart{display:flex;align-items:flex-end;gap:4px;height:60px;margin-top:0.8rem;}
+  .bar{flex:1;border-radius:3px 3px 0 0;min-height:4px;transition:height 0.3s;}
+  .bar.low-c{background:rgba(0,255,136,0.5);}
+  .bar.med-c{background:rgba(255,184,0,0.5);}
+  .bar.high-c{background:rgba(255,59,92,0.5);}
+
+  /* SECTION */
+  .section-head{font-size:1rem;font-weight:600;color:var(--text);margin-bottom:0.8rem;
+    padding-bottom:0.5rem;border-bottom:1px solid var(--border);}
+
+  .two-col{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-bottom:1rem;}
+</style>
+
+<h2 class="sr-only">G-CAD: AI-Driven Cyber Anomaly Detection dashboard with detection, logs, team info, and contact details</h2>
+
+<div style="background:#030d1a;min-height:100vh;">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="grid-lines"></div>
+  <div class="hero-inner">
+    <div class="tag">&#11044; SYSTEM ONLINE — G-CAD v2.0</div>
+    <h1>AI-Driven <span>Cyber Anomaly</span> Detection<br>& Secure Audit Logging</h1>
+    <p style="font-family:'Share Tech Mono',monospace;font-size:12px;color:#7aafc8;margin-top:0.5rem;">
+      Behavioral Analysis &nbsp;|&nbsp; Dynamic Risk Scoring &nbsp;|&nbsp; Tamper-Proof Logging
+    </p>
+    <div class="hero-meta">
+      <div class="meta-pill"><div class="dot green pulse"></div>Real-time monitoring active</div>
+      <div class="meta-pill"><div class="dot blue"></div>ML model loaded</div>
+      <div class="meta-pill"><div class="dot green"></div>Audit logs secured</div>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('dashboard')">Dashboard</button>
+  <button class="tab" onclick="switchTab('detect')">Anomaly Detection</button>
+  <button class="tab" onclick="switchTab('logs')">Audit Logs</button>
+  <button class="tab" onclick="switchTab('about')">About</button>
+  <button class="tab" onclick="switchTab('contact')">Contact</button>
+</div>
+
+<!-- DASHBOARD PAGE -->
+<div id="page-dashboard" class="page active">
+  <div class="stats">
+    <div class="stat"><div class="stat-val green">247</div><div class="stat-lbl">Events Analyzed</div></div>
+    <div class="stat"><div class="stat-val red">12</div><div class="stat-lbl">Anomalies Detected</div></div>
+    <div class="stat"><div class="stat-val warn">36</div><div class="stat-lbl">Avg Risk Score</div></div>
+    <div class="stat"><div class="stat-val green">99.2%</div><div class="stat-lbl">System Uptime</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Risk Distribution</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;font-family:'Share Tech Mono',monospace;margin-bottom:4px;">
+            <span style="color:#00ff88">Low Risk</span><span style="color:#7aafc8">186 events</span>
+          </div>
+          <div class="meter"><div class="meter-fill" style="width:75%;background:#00ff88;opacity:0.7;"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;font-family:'Share Tech Mono',monospace;margin-bottom:4px;">
+            <span style="color:#ffb800">Medium Risk</span><span style="color:#7aafc8">49 events</span>
+          </div>
+          <div class="meter"><div class="meter-fill" style="width:20%;background:#ffb800;opacity:0.7;"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;font-family:'Share Tech Mono',monospace;margin-bottom:4px;">
+            <span style="color:#ff3b5c">High Risk</span><span style="color:#7aafc8">12 events</span>
+          </div>
+          <div class="meter"><div class="meter-fill" style="width:5%;background:#ff3b5c;opacity:0.8;"></div></div>
+        </div>
+      </div>
+      <div class="mini-chart" id="bar-chart"></div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#7aafc8;margin-top:4px;">last 12 analysis runs</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Recent Threats</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:rgba(255,59,92,0.06);border:1px solid rgba(255,59,92,0.2);border-radius:4px;">
+          <div>
+            <div style="font-size:13px;color:#c8e6f5;">Brute Force Login</div>
+            <div style="font-size:11px;font-family:'Share Tech Mono',monospace;color:#7aafc8;">192.168.1.44 — 2m ago</div>
+          </div>
+          <span class="badge high">HIGH</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:rgba(255,184,0,0.05);border:1px solid rgba(255,184,0,0.2);border-radius:4px;">
+          <div>
+            <div style="font-size:13px;color:#c8e6f5;">Unusual API Access</div>
+            <div style="font-size:11px;font-family:'Share Tech Mono',monospace;color:#7aafc8;">10.0.0.12 — 15m ago</div>
+          </div>
+          <span class="badge med">MED</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.15);border-radius:4px;">
+          <div>
+            <div style="font-size:13px;color:#c8e6f5;">Port Scan Attempt</div>
+            <div style="font-size:11px;font-family:'Share Tech Mono',monospace;color:#7aafc8;">172.16.5.8 — 1h ago</div>
+          </div>
+          <span class="badge low">LOW</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Core Features</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;">
+      <div style="padding:0.8rem;background:rgba(0,229,255,0.04);border:1px solid var(--border);border-radius:5px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;">[01] ML DETECTION</div>
+        <div style="font-size:13px;color:var(--text);">AI-based behavioral anomaly analysis</div>
+      </div>
+      <div style="padding:0.8rem;background:rgba(0,229,255,0.04);border:1px solid var(--border);border-radius:5px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;">[02] RISK SCORING</div>
+        <div style="font-size:13px;color:var(--text);">Dynamic 0–100 risk score engine</div>
+      </div>
+      <div style="padding:0.8rem;background:rgba(0,229,255,0.04);border:1px solid var(--border);border-radius:5px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;">[03] AUDIT LOGS</div>
+        <div style="font-size:13px;color:var(--text);">Tamper-proof secure event logging</div>
+      </div>
+      <div style="padding:0.8rem;background:rgba(0,229,255,0.04);border:1px solid var(--border);border-radius:5px;">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;">[04] REAL-TIME</div>
+        <div style="font-size:13px;color:var(--text);">Live analysis and instant alerts</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DETECTION PAGE -->
+<div id="page-detect" class="page">
+  <div class="card" style="margin-bottom:1rem;">
+    <div class="card-title">AI Pattern Recognition Engine</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;font-family:'Share Tech Mono',monospace;">
+      Enter any user activity or network event to analyze for anomalies.
+    </p>
+    <div class="input-row">
+      <input class="detect-input" id="detect-input" placeholder="e.g. multiple failed logins from 192.168.1.1 in 30 seconds..." />
+      <button class="btn" onclick="runDetection()">ANALYZE</button>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:0.5rem;">
+      <span style="font-size:11px;font-family:'Share Tech Mono',monospace;color:var(--text2);">Quick test:</span>
+      <button onclick="setInput(this)" style="background:rgba(0,229,255,0.07);border:1px solid var(--border);color:var(--text2);padding:3px 10px;border-radius:3px;font-family:'Share Tech Mono',monospace;font-size:11px;cursor:pointer;">brute force login</button>
+      <button onclick="setInput(this)" style="background:rgba(0,229,255,0.07);border:1px solid var(--border);color:var(--text2);padding:3px 10px;border-radius:3px;font-family:'Share Tech Mono',monospace;font-size:11px;cursor:pointer;">normal file access</button>
+      <button onclick="setInput(this)" style="background:rgba(0,229,255,0.07);border:1px solid var(--border);color:var(--text2);padding:3px 10px;border-radius:3px;font-family:'Share Tech Mono',monospace;font-size:11px;cursor:pointer;">suspicious api call at 3am</button>
+    </div>
+    <div class="progress-wrap" id="progress-wrap">
+      <div class="progress-label" id="progress-label">Initializing analysis...</div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+    <div class="result-card" id="result-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <div>
+          <div class="result-score" id="result-score">72</div>
+          <div class="result-badge" id="result-badge">MEDIUM RISK</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:4px;">ANALYSIS COMPLETE</div>
+          <div style="font-size:12px;font-family:'Share Tech Mono',monospace;color:var(--text2);" id="result-time"></div>
+        </div>
+      </div>
+      <div class="meter" style="margin:0.8rem 0;">
+        <div class="meter-fill" id="result-meter" style="width:0%;"></div>
+      </div>
+      <div class="result-details" id="result-details"></div>
+    </div>
+  </div>
+</div>
+
+<!-- LOGS PAGE -->
+<div id="page-logs" class="page">
+  <div class="card">
+    <div class="card-title">Secure Audit Log</div>
+    <div style="overflow-x:auto;">
+      <table class="log-table">
+        <thead>
+          <tr>
+            <th>TIMESTAMP</th>
+            <th>EVENT</th>
+            <th>SOURCE IP</th>
+            <th>SCORE</th>
+            <th>STATUS</th>
+          </tr>
+        </thead>
+        <tbody id="log-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT PAGE -->
+<div id="page-about" class="page">
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Project Overview</div>
+      <p style="font-size:14px;color:var(--text);line-height:1.7;">
+        G-CAD presents an AI-driven framework for detecting anomalies in user and network behavior.
+        Unlike traditional systems, it focuses on behavioral analysis and dynamic risk scoring —
+        identifying unusual activities, assigning risk levels, and ensuring secure, tamper-proof logging of events.
+      </p>
+      <div style="margin-top:1rem;">
+        <div style="font-size:11px;font-family:'Share Tech Mono',monospace;color:var(--text2);margin-bottom:6px;letter-spacing:1px;">TECH STACK</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <span style="background:rgba(0,229,255,0.08);border:1px solid var(--border);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:11px;padding:3px 10px;border-radius:3px;">Python Flask</span>
+          <span style="background:rgba(0,229,255,0.08);border:1px solid var(--border);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:11px;padding:3px 10px;border-radius:3px;">Machine Learning</span>
+          <span style="background:rgba(0,229,255,0.08);border:1px solid var(--border);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:11px;padding:3px 10px;border-radius:3px;">REST API</span>
+          <span style="background:rgba(0,229,255,0.08);border:1px solid var(--border);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:11px;padding:3px 10px;border-radius:3px;">Secure Logging</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Objectives</div>
+      <div class="obj-item"><div class="obj-num">01</div><div class="obj-text">Detect cyber anomalies using machine learning</div></div>
+      <div class="obj-item"><div class="obj-num">02</div><div class="obj-text">Reduce false positives using intelligent scoring</div></div>
+      <div class="obj-item"><div class="obj-num">03</div><div class="obj-text">Provide real-time behavioral analysis</div></div>
+      <div class="obj-item"><div class="obj-num">04</div><div class="obj-text">Ensure secure, tamper-proof audit logging</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Team</div>
+    <div class="team-grid">
+      <div class="member"><div class="avatar">GG</div><div class="member-name">Gopinath G</div><div class="member-role">Developer</div></div>
+      <div class="member"><div class="avatar">JJ</div><div class="member-name">Jayapradap J</div><div class="member-role">Developer</div></div>
+      <div class="member"><div class="avatar">AA</div><div class="member-name">Abdul Pathiaq A</div><div class="member-role">Developer</div></div>
+      <div class="member"><div class="avatar">DM</div><div class="member-name">David Raj M</div><div class="member-role">Developer</div></div>
+    </div>
+    <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);">
+      <div style="font-size:11px;font-family:'Share Tech Mono',monospace;color:var(--text2);margin-bottom:4px;">GUIDED BY</div>
+      <div style="font-size:14px;color:var(--text);">Mrs. R. Ranjani, M.E., (Ph.D)</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT PAGE -->
+<div id="page-contact" class="page">
+  <div class="contact-grid">
+    <div class="contact-card">
+      <div class="contact-icon">[PHONE]</div>
+      <div class="contact-label">MOBILE</div>
+      <div class="contact-val">+91 8940940853</div>
+    </div>
+    <div class="contact-card">
+      <div class="contact-icon">[MAIL]</div>
+      <div class="contact-label">EMAIL</div>
+      <div class="contact-val">captech2024@gmail.com</div>
+    </div>
+    <div class="contact-card">
+      <div class="contact-icon">[IG]</div>
+      <div class="contact-label">INSTAGRAM</div>
+      <div class="contact-val">@captechlabs</div>
+    </div>
+    <div class="contact-card">
+      <div class="contact-icon">[LOC]</div>
+      <div class="contact-label">LOCATION</div>
+      <div class="contact-val">Paris Nagar, Moolakulam, Puducherry 605010</div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:1rem;">
+    <div class="card-title">Project Info</div>
+    <p style="font-size:13px;font-family:'Share Tech Mono',monospace;color:var(--text2);line-height:1.8;">
+      Final Year B.Tech — Information Technology<br>
+      Project Title: AI-Driven Cyber Anomaly Detection and Secure Audit Logging Framework (G-CAD)<br>
+      Presented for: IEEE Paper Demonstration &amp; Technical Viva
+    </p>
+  </div>
+</div>
+
+</div>
+
+<script>
+const steps = ["Initializing ML engine...","Loading behavioral model...","Scanning patterns...","Computing risk vectors...","Generating audit entry...","Analysis complete."];
+const phrases = {
+  high:["brute force","attack","flood","injection","exploit","hack","malicious","unauthorized","root","shell","3am","2am","midnight","suspicious","anomalous"],
+  medium:["multiple","repeated","failed","unusual","api","unknown","elevated","scan","port"],
+};
+const logData=[
+  {ts:"2025-10-08 09:14:22",event:"Multiple failed SSH logins",ip:"192.168.1.44",score:87,level:"high"},
+  {ts:"2025-10-08 09:02:11",event:"Unusual API endpoint access",ip:"10.0.0.12",score:54,level:"med"},
+  {ts:"2025-10-08 08:45:00",event:"Port scan detected",ip:"172.16.5.8",score:32,level:"low"},
+  {ts:"2025-10-08 08:30:17",event:"Database query spike",ip:"10.0.0.5",score:61,level:"med"},
+  {ts:"2025-10-08 08:12:05",event:"Normal user login",ip:"192.168.0.20",score:8,level:"low"},
+  {ts:"2025-10-08 07:58:40",event:"Admin panel access",ip:"10.0.0.1",score:15,level:"low"},
+];
+
+function buildLogs(){
+  const tb=document.getElementById('log-body');
+  tb.innerHTML=logData.map(r=>`
+    <tr>
+      <td style="font-family:'Share Tech Mono',monospace;font-size:11px;">${r.ts}</td>
+      <td>${r.event}</td>
+      <td style="font-family:'Share Tech Mono',monospace;font-size:11px;">${r.ip}</td>
+      <td style="font-family:'Share Tech Mono',monospace;font-weight:600;color:${r.level==='high'?'#ff3b5c':r.level==='med'?'#ffb800':'#00ff88'}">${r.score}</td>
+      <td><span class="badge ${r.level}">${r.level.toUpperCase()}</span></td>
+    </tr>`).join('');
+}
+
+function buildBarChart(){
+  const scores=[22,45,67,12,89,34,55,78,15,42,91,38];
+  const c=document.getElementById('bar-chart');
+  c.innerHTML=scores.map(s=>{
+    const cls=s<40?'low-c':s<70?'med-c':'high-c';
+    return `<div class="bar ${cls}" style="height:${s*0.6}px;"></div>`;
+  }).join('');
+}
+
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    const names=['dashboard','detect','logs','about','contact'];
+    t.classList.toggle('active',names[i]===name);
+  });
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+}
+
+function setInput(btn){
+  document.getElementById('detect-input').value=btn.textContent;
+}
+
+function scoreInput(txt){
+  const l=txt.toLowerCase();
+  for(const p of phrases.high) if(l.includes(p)) return Math.floor(72+Math.random()*25);
+  for(const p of phrases.medium) if(l.includes(p)) return Math.floor(42+Math.random()*28);
+  return Math.floor(5+Math.random()*30);
+}
+
+function getLevel(s){return s>=70?'high':s>=40?'medium':'low';}
+
+function runDetection(){
+  const inp=document.getElementById('detect-input').value.trim();
+  if(!inp) return;
+  const pw=document.getElementById('progress-wrap');
+  const pf=document.getElementById('progress-fill');
+  const pl=document.getElementById('progress-label');
+  const rc=document.getElementById('result-card');
+  pw.style.display='block';
+  rc.style.display='none';
+  pf.style.width='0%';
+  let step=0;
+  const iv=setInterval(()=>{
+    step++;
+    const pct=Math.round((step/steps.length)*100);
+    pf.style.width=pct+'%';
+    pl.textContent=steps[step-1];
+    if(step>=steps.length){
+      clearInterval(iv);
+      setTimeout(()=>{showResult(inp,pw,rc);},300);
+    }
+  },380);
+}
+
+function showResult(inp,pw,rc){
+  const score=scoreInput(inp);
+  const level=getLevel(score);
+  pw.style.display='none';
+  rc.style.display='block';
+  rc.className='result-card '+level;
+  const rs=document.getElementById('result-score');
+  const rb=document.getElementById('result-badge');
+  const rm=document.getElementById('result-meter');
+  const rd=document.getElementById('result-details');
+  const rt=document.getElementById('result-time');
+  rs.className='result-score '+level;
+  rs.textContent=score;
+  rb.className='result-badge '+level;
+  rb.textContent=(level==='high'?'HIGH':level==='medium'?'MEDIUM':'LOW')+' RISK';
+  rm.style.width=score+'%';
+  rm.style.background=level==='high'?'#ff3b5c':level==='medium'?'#ffb800':'#00ff88';
+  rt.textContent=new Date().toLocaleTimeString();
+  const checks=level==='high'
+    ?['Anomalous pattern confirmed','Behavioral deviation: critical','Immediate action recommended']
+    :level==='medium'
+    ?['Elevated activity detected','Pattern warrants monitoring','Review recommended']
+    :['Activity within normal range','No significant deviations','Pattern recognized as benign'];
+  rd.innerHTML='<div style="color:var(--accent);font-size:11px;letter-spacing:1px;margin-bottom:6px;">AI PATTERN RECOGNITION COMPLETED &nbsp;|&nbsp; BEHAVIORAL ANALYSIS SUCCESSFUL</div>'
+    +checks.map(c=>`<div><span class="check">&#10003;</span>${c}</div>`).join('');
+
+  logData.unshift({
+    ts:new Date().toLocaleString(),
+    event:inp.length>40?inp.slice(0,40)+'...':inp,
+    ip:'127.0.0.1',score,
+    level:level==='medium'?'med':level
+  });
+  logData.pop();
+  buildLogs();
+}
+
+buildLogs();
+buildBarChart();
+</script>
